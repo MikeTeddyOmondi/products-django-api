@@ -1,0 +1,44 @@
+version: "3.6"
+services:
+  web:
+    image: ranckosolutionsinc/products-django-api:lts
+    container_name: products-django-api
+    ports:
+      - "8001:8000"
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - database
+  mariadb:
+    image: mariadb:10.4.4
+    container_name: products-django-api-database
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    restart: always
+    volumes:
+      - ./db/mysql:/var/lib/mysql:ro
+      - ./db:/docker-entrypoint-initdb.d/:ro
+  phpmyadmin:
+    image: phpmyadmin:5.2
+    container_name: products-django-api-database-ui
+    restart: always
+    ports:
+      - 8180:80
+    environment:
+      - PMA_ARBITRARY=0
+      - PMA_HOST=mariadb
+      - PMA_PORT=3306
+      - PMA_USER=${PMA_DB_USER}
+      - PMA_PASSWORD=${PMA_DB_PASSWORD}
+    depends_on:
+      - database
+volumes:
+  mariadb:
