@@ -1,9 +1,3 @@
----
-runme:
-  id: 01HPPTJQHE69KYRK5YDFEQ523F
-  version: v3
----
-
 # Products RESTful API 
 
 Technology used: 
@@ -58,4 +52,4 @@ docker-compose down
 Stop services while removing volumes: 
 ```sh
 docker-compose up -d -v 
-```
+```
