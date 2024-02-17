@@ -6,6 +6,8 @@ services:
     ports:
       - "8001:8000"
     environment:
+      - DEBUG=${DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
       - DB_NAME=${DB_NAME}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
@@ -13,6 +15,8 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
       - mariadb
+    networks:
+      - products-service
   mariadb:
     image: mariadb:10.4.4
     container_name: products-django-api-database
@@ -24,8 +28,10 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     restart: always
     volumes:
-      - ./db/mysql:/var/lib/mysql:ro
+      - ./db/mysql:/var/lib/mysql
       - ./db:/docker-entrypoint-initdb.d/:ro
+    networks:
+      - products-service
   phpmyadmin:
     image: phpmyadmin:5.2
     container_name: products-django-api-database-ui
@@ -40,5 +46,10 @@ services:
       - PMA_PASSWORD=${PMA_DB_PASSWORD}
     depends_on:
       - mariadb
+    networks:
+      - products-service
 volumes:
   mariadb:
+networks:
+  products-service: 
+    name: products-service

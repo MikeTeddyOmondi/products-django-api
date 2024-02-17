@@ -1,9 +1,12 @@
-FROM python:3.8-slim
+FROM python:3.12-bullseye
 LABEL Maintainer "MikeTeddyOmondi <mike_omondi@outlook.com>"
 
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update && python -m pip install --upgrade pip && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install python3-pip python-dev-is-python3 libmariadb-dev libssl-dev -y \
+    && python -m pip install --upgrade pip \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /src
 WORKDIR /src
