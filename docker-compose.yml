@@ -12,7 +12,7 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:
-      - database
+      - mariadb
   mariadb:
     image: mariadb:10.4.4
     container_name: products-django-api-database
@@ -39,6 +39,6 @@ services:
       - PMA_USER=${PMA_DB_USER}
       - PMA_PASSWORD=${PMA_DB_PASSWORD}
     depends_on:
-      - database
+      - mariadb
 volumes:
   mariadb:
