@@ -12,7 +12,7 @@ Clone the git repo; then
 
 Create a virtual env
 ```sh
-python -m venv env
+python -m venv .venv
 ```
 
 Install required packages 
