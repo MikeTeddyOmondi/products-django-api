@@ -13,6 +13,8 @@ services:
       - DB_PORT=${DB_PORT}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ./static:/src/static
     depends_on:
       - mariadb
     networks:
@@ -30,11 +32,11 @@ services:
     restart: always
     volumes:
       - ./db/mysql:/var/lib/mysql
-      - ./db./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - products-service
   phpmyadmin:
-    image: phpmyadmin:5.2
+    image: phpmyadmin/phpmyadmin:5.2
     container_name: products-django-api-database-ui
     restart: always
     ports:
@@ -45,6 +47,7 @@ services:
       - PMA_PORT=3306
       - PMA_USER=${PMA_DB_USER}
       - PMA_PASSWORD=${PMA_DB_PASSWORD}
+      - PMA_ARBITRARY_PASSWORD=${PMA_ARBITRARY_PASSWORD}
     depends_on:
       - mariadb
     networks:

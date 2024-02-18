@@ -18,3 +18,6 @@ passwords.txt
 **/__pycache__
 .venv
 .env
+
+db/
+static/
