@@ -2,7 +2,7 @@
 
 Technology used: 
 1. Django - Python web framework
-2. MariaDB - Relational Database
+2. Postgresql - Relational Database
 
 Getting started: 
 

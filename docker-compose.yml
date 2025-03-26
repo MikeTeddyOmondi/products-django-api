@@ -1,8 +1,10 @@
-version: "3.6"
 services:
   web:
     image: ranckosolutionsinc/products-django-api:lts
     container_name: products-django-api
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8001:8000"
     environment:
@@ -14,46 +16,48 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
     volumes:
-      - ./static:/src/static
+      - products_django_api_static:/src/static
+      # - ./static:/src/static
     depends_on:
-      - mariadb
+      - postgres
     networks:
       - products-service
-  mariadb:
-    image: mariadb:10.4.4
+  postgres:
+    image: postgres:17-alpine
     container_name: products-django-api-database
-    ports:
-      - 3306:3306
+    restart: unless-stopped
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-    restart: always
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 54320:5432
     volumes:
-      - ./db/mysql:/var/lib/mysql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - products_django_api_pg_data:/var/lib/postgresql/data
+      # - ./db/pg_data:/var/lib/postgresql/data
+      - /mnt/c/Users/ADMIN/src-code/python/products_django_api/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      # - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - products-service
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:5.2
+  pgadmin:
     container_name: products-django-api-database-ui
-    restart: always
-    ports:
-      - 8180:80
+    image: dpage/pgadmin4:8.5
     environment:
-      - PMA_ARBITRARY=0
-      - PMA_HOST=mariadb
-      - PMA_PORT=3306
-      - PMA_USER=${PMA_DB_USER}
-      - PMA_PASSWORD=${PMA_DB_PASSWORD}
-      - PMA_ARBITRARY_PASSWORD=${PMA_ARBITRARY_PASSWORD}
-    depends_on:
-      - mariadb
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      # PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - pgadmin:/var/lib/pgadmin
+    ports:
+      - 5555:80
     networks:
       - products-service
+    restart: unless-stopped
+    depends_on:
+      - postgres
 volumes:
-  mariadb:
+  pgadmin:
+  products_django_api_static:
+  products_django_api_pg_data:
 networks:
   products-service: 
     name: products-service
+    driver: bridge
